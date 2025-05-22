@@ -1,0 +1,27 @@
+import streamlit as st
+from document_processor import load_pdf, chunk_text
+from vector_store import create_vector_store, save_vector_store
+from qa_pipeline import build_qa_chain
+
+st.set_page_config(page_title="AI Document Intelligence", layout="wide")
+
+st.title("📄 AI-Powered Document Intelligence System")
+
+uploaded_file = st.file_uploader("Upload a PDF document", type=["pdf"])
+
+if uploaded_file is not None:
+    with st.spinner("Reading and processing the document..."):
+        raw_text = load_pdf(uploaded_file)
+        chunks = chunk_text(raw_text)
+        vectorstore = create_vector_store(chunks)
+        save_vector_store(vectorstore)
+        qa_chain = build_qa_chain(vectorstore)
+        st.success("Document processed successfully!")
+
+        st.subheader("Ask a question about the document:")
+        user_query = st.text_input("Type your question here...")
+
+        if user_query:
+            with st.spinner("Generating answer..."):
+                result = qa_chain.run(user_query)
+                st.markdown(f"**Answer:** {result}")
