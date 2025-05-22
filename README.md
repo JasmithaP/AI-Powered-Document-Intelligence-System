@@ -34,3 +34,8 @@ Automated document review for analysts
 
 Business intelligence from internal reports or communications
 
+## How to Run
+
+```bash
+pip install -r requirements.txt
+streamlit run app.py
